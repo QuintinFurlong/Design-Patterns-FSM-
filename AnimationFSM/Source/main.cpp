@@ -10,7 +10,7 @@
 
 using namespace std;
 
-int main(int argc, char** argv)
+int main1(int argc, char** argv)
 {
 	bool quit = false;
 	SDL_Event event;
@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 }
 
 
-int main2(int argc, char* args[])
+int main(int argc, char* args[])
 {
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
@@ -106,14 +106,25 @@ int main2(int argc, char* args[])
 	{
 		for (short frame = 0; frame < 6; frame++)
 		{
-			animated_sprite.addFrame(sf::IntRect(3 + (85 * frame), 3 + (84 * lines), 84, 84));
+			animated_sprite.addFrame(SDL_Rect{ 3 + (85 * frame), 3 + (84 * lines), 84, 84 });
 		}
 	}
 	Player player(animated_sprite);
 	Input input;
 	
+	bool quit = false;
+	SDL_Event sdl_event;
+	SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Window* sdl_window = SDL_CreateWindow("SDL2 Displaying Image",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+	SDL_Renderer* renderer = SDL_CreateRenderer(sdl_window, -1, 0);
+	SDL_Surface* image = SDL_LoadBMP("assets/grid.bmp");
+	SDL_Texture* sdl_texture = SDL_CreateTextureFromSurface(renderer, image);
+	SDL_Rect dstrect = { 10, 10, 300, 300 };
+
 	// Start the game loop
-	while (window.isOpen())
+	while (!quit)
 	{
 		// Process events
 		sf::Event event;
@@ -152,6 +163,23 @@ int main2(int argc, char* args[])
 				break;
 			}
 		}
+		//SDL_WaitEvent(&sdl_event);
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			
+			quit = true;
+			break;
+		}
+		if (quit)
+		{
+			SDL_DestroyTexture(sdl_texture);
+			SDL_FreeSurface(image);
+			SDL_DestroyRenderer(renderer);
+			SDL_DestroyWindow(sdl_window);
+			SDL_Quit();
+		}
+
 		player.handleInput(input);
 		player.update(input.getCurrent());
 
@@ -160,7 +188,9 @@ int main2(int argc, char* args[])
 		window.clear();
 
 		// Draw the Players Current Animated Sprite
-		window.draw(player.getAnimatedSprite());
+		//window.draw(player.getAnimatedSprite());
+		SDL_RenderCopy(renderer, sdl_texture, &player.getAnimatedSprite(), &dstrect);
+		SDL_RenderPresent(renderer);
 		window.draw(mess);
 
 		// Update the window

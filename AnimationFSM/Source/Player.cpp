@@ -17,11 +17,10 @@ Player::Player(const AnimatedSprite& s) : m_animated_sprite(s)
 
 Player::~Player() {}
 
-AnimatedSprite& Player::getAnimatedSprite()
+SDL_Rect& Player::getAnimatedSprite()
 {
 	int frame = m_animated_sprite.getCurrentFrame();
-	m_animated_sprite.setTextureRect(m_animated_sprite.getFrame(frame));
-	return m_animated_sprite;
+	return m_animated_sprite.getFrame(frame);
 }
 
 void Player::handleInput(Input in)

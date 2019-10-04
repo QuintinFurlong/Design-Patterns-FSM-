@@ -15,7 +15,7 @@ private:
 public:
 	Player(const AnimatedSprite&);
 	~Player();
-	AnimatedSprite& getAnimatedSprite();
+	SDL_Rect& getAnimatedSprite();
 	void handleInput(Input);
 	void update(int t_numOfAnimes);
 };
