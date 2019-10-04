@@ -4,10 +4,82 @@
 #include <Headers\Player.h>
 #include <Headers\Input.h>
 #include <Headers\Debug.h>
+#include <stdio.h>
+#include <SDL.h>
+#include <Headers\SDL_image.h>
 
 using namespace std;
 
-int main()
+int main(int argc, char** argv)
+{
+	bool quit = false;
+	SDL_Event event;
+
+	SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Window* window = SDL_CreateWindow("SDL2 Displaying Image",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640, 480, 0);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_Surface* image = SDL_LoadBMP("assets/grid.bmp");
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, image);
+	while (!quit)
+	{
+		SDL_WaitEvent(&event);
+
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(image);
+			SDL_DestroyRenderer(renderer);
+			SDL_DestroyWindow(window);
+			quit = true;
+			break;
+		}
+		SDL_RenderCopy(renderer, texture, NULL, NULL);
+		SDL_RenderPresent(renderer);
+	}
+
+	SDL_Quit();
+
+	return 0;
+	/*
+	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Window* win = SDL_CreateWindow("my window", 100, 100, 640, 480, SDL_WINDOW_SHOWN);
+	SDL_Surface* winSurface = SDL_GetWindowSurface(win);
+
+	SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 55, 90, 120));
+	SDL_Event event;
+	while (true)
+	{
+		SDL_WaitEvent(&event);
+
+		if (event.type == SDL_KEYDOWN)
+		{
+			if (event.key.keysym.sym == SDLK_LEFT)
+			{
+				SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 255,0,0));
+			}
+			else if (event.key.keysym.sym == SDLK_RIGHT)
+			{
+				SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 0,255,0));
+			}
+			else if (event.key.keysym.sym == SDLK_UP)
+			{
+				SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 0,0,255));
+			}
+			else if (event.key.keysym.sym == SDLK_DOWN)
+			{
+				SDL_FillRect(winSurface, NULL, SDL_MapRGB(winSurface->format, 100,100,100));
+			}
+		}
+		SDL_UpdateWindowSurface(win);
+	}
+	return NULL;*/
+}
+
+
+int main2(int argc, char* args[])
 {
 	// Create the main window
 	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML window");
